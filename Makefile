@@ -21,6 +21,11 @@ query-db:
 	@docker-compose -f ${DB_COMPOSE_FILE_PATH} \
 		exec ${DB_DOCKER_SERVICE_NAME} psql -d process_db -U ${DB_ROOT_USER}
 
+query-persons-db:
+	@docker-compose -f ${DB_COMPOSE_FILE_PATH} \
+		exec ${DB_DOCKER_SERVICE_NAME} psql -d process_db -U ${DB_ROOT_USER} \
+		--command='SELECT * FROM persons;'
+
 migrate-db:
 	@echo '${YELLOW}Running migrations${COLOR}'
 	@sleep 1
@@ -31,4 +36,4 @@ migrate-db:
 		'ls migrations/ | xargs -I % sh -c "psql -d process_db \
 		-U ${DB_ROOT_USER} -f ./migrations/%"'
 
-restart-db: finish-db start-db migration-db
+restart-db: finish-db start-db migrate-db query-persons-db
