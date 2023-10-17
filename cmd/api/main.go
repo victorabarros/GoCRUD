@@ -15,12 +15,13 @@ type User struct {
 	FirstName string `gorm:"column:first_name" json:"first_name"`
 }
 
-var dsn = "host=localhost user=postgres_user password=postgres_password dbname=postgres_db port=5432 sslmode=disable"
+var dsn = "host=localhost user=postgres_user password=postgres_password dbname=postgres_db port=5432 sslmode=disable" //todo move to config https://github.com/ardanlabs/service/blob/b483f8b09c9feed037e2342dce6a345050481f21/app/services/sales-api/v1/cmd/cmd.go#L142C15-L142C15
 var db *gorm.DB
 
 func main() {
 	g := gin.Default()
 
+	//todo move to internal/database ; create a Configure function
 	var err error
 	db, err = gorm.Open(postgres.Open(dsn))
 	if err != nil {
@@ -34,9 +35,9 @@ func main() {
 
 func SetRoutes(g *gin.Engine) {
 	//TODO move to internal/router
-	g.GET("/user/:id", GetUser)
-
-	g.GET("/ping", func(ctx *gin.Context) {
+	// g.GET("/user/:id", GetUser)
+	g.Handle(http.MethodGet, "/user/:id", GetUser)
+	g.Handle(http.MethodGet, "/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
@@ -44,6 +45,7 @@ func SetRoutes(g *gin.Engine) {
 }
 
 func GetUser(ctx *gin.Context) {
+	//todo move to internal/services/user
 	param := ctx.Param("id")
 	id, err := strconv.Atoi(param)
 	if err != nil {
@@ -52,6 +54,7 @@ func GetUser(ctx *gin.Context) {
 		return
 	}
 
+	//todo move to internal/repositories/user
 	var user User
 	db.Where("id = ?", id).First(&user)
 
