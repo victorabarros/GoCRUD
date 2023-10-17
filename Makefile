@@ -12,7 +12,7 @@ run:
 
 start-db:
 	@echo '${YELLOW}Starting Postgres container${COLOR_OFF}'
-	@docker run --name ${DB_DOCKER_NAME} -d \
+	@docker run --name ${DB_DOCKER_NAME} -d -p 5432:5432\
 		--env-file ${CONFIG_FILE_PATH} ${DB_DOCKER_IMAGE}
 	@sleep 1
 
