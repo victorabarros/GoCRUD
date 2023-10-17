@@ -23,9 +23,9 @@ finish-db:
 query-db:
 	@docker exec -it ${DB_DOCKER_NAME} psql -d ${DB_SCHEMA} -U ${DB_ROOT_USER}
 
-query-persons-db:
+query-users-db:
 	@docker exec ${DB_DOCKER_NAME} psql -d ${DB_SCHEMA} -U ${DB_ROOT_USER} \
-		--command='SELECT * FROM persons;'
+		--command='SELECT * FROM users;'
 
 migrate-db:
 	@echo '${YELLOW}Running migrations${COLOR}'
@@ -34,4 +34,4 @@ migrate-db:
 		'ls migrations/ | xargs -I % sh -c "psql -d ${DB_SCHEMA} \
 		-U ${DB_ROOT_USER} -f ./migrations/%"'
 
-restart-db: finish-db start-db migrate-db query-persons-db
+restart-db: finish-db start-db migrate-db query-users-db
